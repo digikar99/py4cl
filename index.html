@@ -230,7 +230,7 @@
             <div class="section">
               
                 <h1 id="py4cl2">py4cl2</h1>
-<p>[Last update: v2.6.0]</p>
+<p>[Last update: v2.7.0]</p>
 <h2 id="introduction">Introduction</h2>
 <p><a href="https://github.com/bendudson/py4cl">py4cl</a> is a package by Ben Dudson, aimed at making python libraries availble in Common Lisp using streams to communicate with a separate python process - this is the approach taken by <a href="https://github.com/marcoheisig/cl4py">cl4py</a> and is
 different to the CFFI approach used by <a href="https://github.com/pinterface/burgled-batteries">burgled-batteries</a>,
@@ -243,9 +243,10 @@ but has the same goal.</p>
 This shouldn't be a bottleneck if you're planning to run "long" processes in python. (For example, deep learning :). )</li>
 <li>Virtual environments: <a href="#pycmd"><code>pycmd</code></a> (<code>*python-command*</code> in <code>py4cl</code>): Choose which python binary to use. Works with miniconda.</li>
 <li>Multiple python processes (not documented here) - parallel execution?</li>
-<li>Tested on SBCL, CCL, ABCL 1.7.1 (Java 1.8), and ECL</li>
+<li>CI for SBCL, CCL, and ECL</li>
+<li>v2.6.0 worked with ABCL 1.7.1 (Java 1.8) despite several limitations (see the documentation included in <a href="https://github.com/digikar99/py4cl2/releases/tag/v2.6.0">that release</a>).</li>
+<li>While CI has not been set up for windows (a PR is welcome!), from v2.7.0, things will be tested locally before releasing.</li>
 <li>No support for inheriting python classes - should require MOP</li>
-<li>Continuous Integration has not been set up for windows; however, the test system ran without errors "as expected" as of version 2.4.1</li>
 <li>Mac users should update to a later version of bash. See <a href="https://stackoverflow.com/questions/32481734/shell-error-with-bash-bad-substitution-no-closing">this stackoverflow question</a>. Thanks to <a href="https://github.com/byulparan">byulparen</a> for pointing out!</li>
 <li>Embeddable into lisp-image - the code from py4cl.py is copied into <code>*python-code*</code> and heredocs are used. This is made to happen for unix and not for windows; until someone gets into Windows heredocs. (Maintainer note: This entails not using single-quote character <code>'</code> in py4cl.py.) Also note that this still requires the developer (= py4cl2 user) to supply the python libraries and binaries along with the lisp image to the (very-)end-user.</li>
 <li>Improvements in large array transfer speed numpy-file-format (see <a href="#initialize">initialize</a>); while this does not beat <code>remote-objects</code> in existence since <code>py4cl</code>, it does provide a faster way to send array data from lisp to python and can be beneficial while offloading the work to python process, eg. deep learning.</li>
@@ -997,5 +998,5 @@ T
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2020-12-19 08:15:15.583619+00:00
+Build Date UTC : 2021-02-10 21:36:11.930127+00:00
 -->
