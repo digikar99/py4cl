@@ -54,6 +54,8 @@
     <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#highlights-and-limitations-of-py4cl">Highlights and Limitations of py4cl</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#upcoming-sources-of-possible-code-breakage">Upcoming Sources of Possible Code Breakage</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#changes-over-py4cl">Changes over py4cl</a>
     </li>
@@ -230,7 +232,7 @@
             <div class="section">
               
                 <h1 id="py4cl2">py4cl2</h1>
-<p>[Last update: v2.7.0]</p>
+<p>[Last update: v2.7.1]</p>
 <h2 id="introduction">Introduction</h2>
 <p><a href="https://github.com/bendudson/py4cl">py4cl</a> is a package by Ben Dudson, aimed at making python libraries availble in Common Lisp using streams to communicate with a separate python process - this is the approach taken by <a href="https://github.com/marcoheisig/cl4py">cl4py</a> and is
 different to the CFFI approach used by <a href="https://github.com/pinterface/burgled-batteries">burgled-batteries</a>,
@@ -256,6 +258,12 @@ This shouldn't be a bottleneck if you're planning to run "long" processes in pyt
 <!-- ![slime-demo-image](readme_slime.png) -->
 
 <p><br/></p>
+<h2 id="upcoming-sources-of-possible-code-breakage">Upcoming Sources of Possible Code Breakage</h2>
+<p>(whenever I find the time)</p>
+<ul>
+<li>Extensible type conversion from python to lisp: to allow usage of something like cl-custom-hash-table, or dense-arrays, or one user wanting python lists to be converted to lisp vectors, while another user wanting them to be converted to lisp lists.</li>
+<li>So, avoid using <code>*arrayfiers*</code> and <code>*array-type*</code>; there'd likely come a more general version of these things.</li>
+</ul>
 <h3 id="changes-over-py4cl">Changes over py4cl</h3>
 <p><u><strong>Backwards Incompatible Changes</strong></u></p>
 <p><strong>Unavoidable</strong></p>
@@ -998,5 +1006,5 @@ T
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-02-10 21:36:11.930127+00:00
+Build Date UTC : 2021-04-07 18:41:16.406953+00:00
 -->
