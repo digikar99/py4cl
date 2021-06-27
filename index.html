@@ -583,9 +583,10 @@ you'd need to use something like <a href="#pycall">pycall</a>.</p>
 <blockquote>
 <p>NOTE: This is a new feature and hence unstable; recommended to avoid in production code.</p>
 </blockquote>
-<p>Each entry in the alist <em>LISPIFIERS</em> maps from a lisp-type to a single-argument lisp function. This function takes as input the \"default\" lisp objects and is expected to appropriately parse it to the corresponding lisp object.</p>
+<p>Each entry in the alist <code>*lispifiers*</code> maps from a lisp-type to a single-argument lisp function. This function takes as input the "default" lisp objects and is expected to appropriately parse it to the corresponding lisp object.</p>
 <h4 id="with-lispifiers">with-lispifiers</h4>
-<p><code>(with-lispifiers ((&amp;rest overriding-lispifiers) &amp;body body))</code></p>
+<pre><code class="language-lisp">(with-lispifiers ((&amp;rest overriding-lispifiers) &amp;body body))
+</code></pre>
 <blockquote>
 <p>NOTE: This is a new feature and hence unstable; recommended to avoid in production code.</p>
 </blockquote>
@@ -596,9 +597,9 @@ you'd need to use something like <a href="#pycall">pycall</a>.</p>
 to take a default-lispified object (see lisp-python types translation table in docs)
 and return the appropriate object user expects.</p>
 <p>For example,</p>
-<pre><code class="language-lisp">  (pyeval \&quot;[1, 2, 3]\&quot;) ;=&gt; #(1 2 3) ; the default lispified object
+<pre><code class="language-lisp">  (pyeval &quot;[1, 2, 3]&quot;) ;=&gt; #(1 2 3) ; the default lispified object
   (with-lispifiers ((vector (lambda (x) (coerce (print x) 'list))))
-    (print (pyeval \&quot;[1,2,3]\&quot;))
+    (print (pyeval &quot;[1,2,3]&quot;))
     (print (pyeval 5)))
   ; #(1 2 3) ; default lispified object
   ; (1 2 3)  ; coerced to LIST by the lispifier
@@ -1047,5 +1048,5 @@ T
 
 <!--
 MkDocs version : 1.2.1
-Build Date UTC : 2021-06-27 19:21:45.651875+00:00
+Build Date UTC : 2021-06-27 19:40:16.664832+00:00
 -->
