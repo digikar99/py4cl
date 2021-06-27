@@ -533,10 +533,15 @@ CL-USER&gt; (inp :shape '(1 2))
 <p><code>safety</code> takes care to import the required function from the required module after python process restarts for some reason. However, this affects speed.</p>
 <p>Refer <code>(describe 'defpyfun)</code>.</p>
 <h4 id="defpymodule">defpymodule</h4>
-<pre><code class="language-lisp">(defpymodule pymodule-name &amp;optional import-submodules &amp;key
-  (lisp-package (lispify-name (or as pymodule-name)))
-  (reload t) (safety t) (continue-ignoring-errors t)
-  (silent *defpymodule-silent-p*))
+<pre><code class="language-lisp">(defpymodule (pymodule-name
+              &amp;optional (import-submodules nil)
+              &amp;key (cache t)
+                (continue-ignoring-errors t)
+                (lisp-package (lispify-name pymodule-name) lisp-package-supplied-p)
+                (reload t)
+                (recompile-on-change nil)
+                (safety t)
+                (silent *defpymodule-silent-p*)))
 </code></pre>
 <p><code>lisp-package</code> is the name of the symbol that the package would be bound to.</p>
 <p>Example Usage:</p>
@@ -1042,5 +1047,5 @@ T
 
 <!--
 MkDocs version : 1.2.1
-Build Date UTC : 2021-06-27 19:08:17.207869+00:00
+Build Date UTC : 2021-06-27 19:21:45.651875+00:00
 -->
