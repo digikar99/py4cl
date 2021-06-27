@@ -14,7 +14,7 @@
 
   <link rel="stylesheet" href="css/theme.css" />
   <link rel="stylesheet" href="css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
   
   <script>
     // Current page data
@@ -25,10 +25,9 @@
   
   <script src="js/jquery-2.1.1.min.js" defer></script>
   <script src="js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/lisp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/lisp.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
-  
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -39,17 +38,17 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-        <a href="." class="icon icon-home"> py4cl2</a>
+        <a href="index.html" class="icon icon-home"> py4cl2</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
                 <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href=".">py4cl2</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="index.html">py4cl2</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
     </li>
@@ -119,9 +118,11 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#interfacing-with-non-cl-arrays">Interfacing with non-cl arrays</a>
+    <li class="toctree-l3"><a class="reference internal" href="#custom-type-mapping">Custom Type Mapping</a>
         <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#arrayfiers-and-array-type">*arrayfiers* and *array-type*</a>
+    <li class="toctree-l4"><a class="reference internal" href="#lispifiers">*lispifiers*</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#with-lispifiers">with-lispifiers</a>
     </li>
         </ul>
     </li>
@@ -178,6 +179,10 @@
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#type-mapping-and-pythonize">Type Mapping and Pythonize</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#customizing-type-mapping">Customizing Type-Mapping</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#name-mapping">Name Mapping</a>
     </li>
@@ -205,7 +210,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href=".">py4cl2</a>
+        <a href="index.html">py4cl2</a>
       </nav>
 
       
@@ -213,7 +218,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".">Docs</a> &raquo;</li>
+    <li><a href="index.html">Docs</a> &raquo;</li>
     
       
     
@@ -228,11 +233,12 @@
   
   <hr/>
 </div>
+
           <div role="main">
             <div class="section">
               
                 <h1 id="py4cl2">py4cl2</h1>
-<p>[Last update: v2.7.1]</p>
+<p>[Last update: v2.8.0]</p>
 <h2 id="introduction">Introduction</h2>
 <p><a href="https://github.com/bendudson/py4cl">py4cl</a> is a package by Ben Dudson, aimed at making python libraries availble in Common Lisp using streams to communicate with a separate python process - this is the approach taken by <a href="https://github.com/marcoheisig/cl4py">cl4py</a> and is
 different to the CFFI approach used by <a href="https://github.com/pinterface/burgled-batteries">burgled-batteries</a>,
@@ -259,10 +265,8 @@ This shouldn't be a bottleneck if you're planning to run "long" processes in pyt
 
 <p><br/></p>
 <h2 id="upcoming-sources-of-possible-code-breakage">Upcoming Sources of Possible Code Breakage</h2>
-<p>(whenever I find the time)</p>
 <ul>
-<li>Extensible type conversion from python to lisp: to allow usage of something like cl-custom-hash-table, or dense-arrays, or one user wanting python lists to be converted to lisp vectors, while another user wanting them to be converted to lisp lists.</li>
-<li>So, avoid using <code>*arrayfiers*</code> and <code>*array-type*</code>; there'd likely come a more general version of these things.</li>
+<li><code>*lispifiers*</code> and <code>with-lispifiers</code> symbols are currently unstable introduced in this very version. Avoid using in production code until stability.</li>
 </ul>
 <h3 id="changes-over-py4cl">Changes over py4cl</h3>
 <p><u><strong>Backwards Incompatible Changes</strong></u></p>
@@ -569,15 +573,32 @@ to call a callable (in Python) object, but not defined as a function in Common L
 you'd need to use something like <a href="#pycall">pycall</a>.</p>
 <h4 id="defpyfuns">defpyfuns</h4>
 <p>(Undocumented here.)</p>
-<h3 id="interfacing-with-non-cl-arrays">Interfacing with non-cl arrays</h3>
-<h4 id="arrayfiers-and-array-type">*arrayfiers* and *array-type*</h4>
-<p><code>(GETF *ARRAYFIERS* *ARRAY-TYPE*)</code> should return a single argument function that converts the ARRAY into the required type. An example is given in tests:</p>
-<pre><code class="language-lisp">(let ((*array-type* :numcl)
-      (*arrayfiers* (append (list :numcl #'numcl:asarray)
-                            *arrayfiers*)))
-  (destructuring-bind (a b) (pyeval &quot;(&quot; #(1 2 3) &quot;, &quot; #2A((1 2 3) (4 5 6)) &quot;)&quot;)
-                      (assert-true (numcl:numcl-array-p a))
-                      (assert-true (numcl:numcl-array-p b))))
+<h3 id="custom-type-mapping">Custom Type Mapping</h3>
+<h4 id="lispifiers">*lispifiers*</h4>
+<blockquote>
+<p>NOTE: This is a new feature and hence unstable; recommended to avoid in production code.</p>
+</blockquote>
+<p>Each entry in the alist <em>LISPIFIERS</em> maps from a lisp-type to a single-argument lisp function. This function takes as input the \"default\" lisp objects and is expected to appropriately parse it to the corresponding lisp object.</p>
+<h4 id="with-lispifiers">with-lispifiers</h4>
+<p><code>(with-lispifiers ((&amp;rest overriding-lispifiers) &amp;body body))</code></p>
+<blockquote>
+<p>NOTE: This is a new feature and hence unstable; recommended to avoid in production code.</p>
+</blockquote>
+<p>Each entry of <code>overriding-lispifiers</code> is a two-element list of the form</p>
+<pre><code>  (type lispifier)
+</code></pre>
+<p>Here, <code>type</code> is unevaluated, while <code>lispifier</code> will be evaluated; the <code>lispifier</code> is expected
+to take a default-lispified object (see lisp-python types translation table in docs)
+and return the appropriate object user expects.</p>
+<p>For example,</p>
+<pre><code class="language-lisp">  (pyeval \&quot;[1, 2, 3]\&quot;) ;=&gt; #(1 2 3) ; the default lispified object
+  (with-lispifiers ((vector (lambda (x) (coerce (print x) 'list))))
+    (print (pyeval \&quot;[1,2,3]\&quot;))
+    (print (pyeval 5)))
+  ; #(1 2 3) ; default lispified object
+  ; (1 2 3)  ; coerced to LIST by the lispifier
+  ; 5        ; lispifier uncalled for non-VECTOR
+  5
 </code></pre>
 <h2 id="errors">Errors</h2>
 <h3 id="pyerror">pyerror</h3>
@@ -900,14 +921,14 @@ t       True
 </code></pre>
 <p>Because <code>pyeval</code> and <code>pyexec</code> evaluate strings as python
 expressions, strings passed to them are not escaped or converted as
-other types are. To pass a string to python as an argument, call <code>py4cl::pythonize</code></p>
-<pre><code class="language-lisp">CL-USER&gt; (py4cl::pythonize &quot;string&quot;)
+other types are. To pass a string to python as an argument, call <code>py4cl:pythonize</code></p>
+<pre><code class="language-lisp">CL-USER&gt; (py4cl:pythonize &quot;string&quot;)
 &quot;\&quot;string\&quot;&quot;
-CL-USER&gt; (py4cl::pythonize #'identity)
+CL-USER&gt; (py4cl:pythonize #'identity)
 &quot;_py4cl_LispCallbackObject(1)&quot;
-CL-USER&gt; (py4cl::pythonize 3.0)
+CL-USER&gt; (py4cl:pythonize 3.0)
 &quot;3.0&quot;
-CL-USER&gt; (py4cl::pythonize (model)) ;; keras.Model
+CL-USER&gt; (py4cl:pythonize (model)) ;; keras.Model
 &quot;_py4cl_objects[1918]&quot;
 </code></pre>
 <p>If python objects cannot be converted into a lisp value, then they are
@@ -915,6 +936,18 @@ stored and a handle is returned to lisp. This handle can be used to
 manipulate the object, and when it is garbage collected the python
 object is also deleted (using the <a href="https://common-lisp.net/project/trivial-garbage/">trivial-garbage</a>
 package).</p>
+<h3 id="customizing-type-mapping">Customizing Type-Mapping</h3>
+<blockquote>
+<p>Unstable feature</p>
+</blockquote>
+<p>Since version 2.8.0, values returned from the python process are wrapped inside a call to <code>py4cl2::customize</code>. This function essentially does the following:</p>
+<pre><code class="language-lisp">(defun customize (object)
+  (loop :for (type . lispifier) :in *lispifiers*
+        :if (typep object type)
+          :do (return-from customize (funcall lispifier object)))
+  object)
+</code></pre>
+<p><code>with-lispifiers</code> provides a convenient wrapper to bind the dynamic variable <code>*lispifiers*</code> for executing its <code>body</code>.</p>
 <h2 id="name-mapping">Name Mapping</h2>
 <p>The arguments passed to <code>pycall</code> are parsed as follows: the lisp keywords are converted to their python equivalents. This only entails downcasing the symbol-name of the keywords and replacing hyphens with underscores. If the symbol-name contained capital letters, then, if all the letters are capitals, the symbol-name is downcased; else it stays as it is</p>
 <pre><code class="language-lisp">CL-USER&gt; (pyexec &quot;
@@ -984,15 +1017,18 @@ T
   </div>
 
   <div class="rst-versions" role="note" aria-label="versions">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-          <a href="https://github.com/digikar99/py4cl2/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
-      
-      
-      
-    </span>
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/digikar99/py4cl2/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
 </div>
     <script>var base_url = '.';</script>
+    <script src="js/theme_extra.js" defer></script>
     <script src="js/theme.js" defer></script>
       <script src="search/main.js" defer></script>
     <script defer>
@@ -1005,6 +1041,6 @@ T
 </html>
 
 <!--
-MkDocs version : 1.1.2
-Build Date UTC : 2021-04-07 18:41:16.406953+00:00
+MkDocs version : 1.2.1
+Build Date UTC : 2021-06-27 19:08:17.207869+00:00
 -->
