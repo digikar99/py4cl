@@ -118,11 +118,15 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#custom-type-mapping">Custom Type Mapping</a>
+    <li class="toctree-l3"><a class="reference internal" href="#customizing-type-mapping">Customizing Type Mapping</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#lispifiers">*lispifiers*</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#with-lispifiers">with-lispifiers</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pythonizers">*pythonizers*</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#with-pythonizers">with-pythonizers</a>
     </li>
         </ul>
     </li>
@@ -180,7 +184,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#type-mapping-and-pythonize">Type Mapping and Pythonize</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#customizing-type-mapping">Customizing Type-Mapping</a>
+    <li class="toctree-l3"><a class="reference internal" href="#customizing-type-mapping_1">Customizing Type-Mapping</a>
     </li>
         </ul>
     </li>
@@ -238,7 +242,7 @@
             <div class="section">
               
                 <h1 id="py4cl2">py4cl2</h1>
-<p>[Last update: v2.8.0]</p>
+<p>[Last update: v2.9.0]</p>
 <h2 id="introduction">Introduction</h2>
 <p><a href="https://github.com/bendudson/py4cl">py4cl</a> is a package by Ben Dudson, aimed at making python libraries availble in Common Lisp using streams to communicate with a separate python process - this is the approach taken by <a href="https://github.com/marcoheisig/cl4py">cl4py</a> and is
 different to the CFFI approach used by <a href="https://github.com/pinterface/burgled-batteries">burgled-batteries</a>,
@@ -392,7 +396,8 @@ between lisp and python. This process is IO intensive, writing as much as 100MB 
 <h4 id="config-config-var">*config* / config-var</h4>
 <p>These values can also be accessed using <code>*config*</code> and <code>config-var</code>:</p>
 <pre><code class="language-lisp">CL-USER&gt; py4cl2:*config*
-((PY4CL2:PYCMD . &quot;/home/user/miniconda3/bin/python&quot;)
+((PY4CL2:PRINT-PYTHON-TRACEBACK . T)
+ (PY4CL2:PYCMD . &quot;/home/user/miniconda3/bin/python&quot;)
  (PY4CL2:NUMPY-PICKLE-LOCATION . &quot;/home/user/ram-disk/_numpy_pickle.npy&quot;)
  (PY4CL2:NUMPY-PICKLE-LOWER-BOUND . 100000))
 CL-USER&gt; (py4cl2:config-var 'py4cl2:numpy-pickle-location)
@@ -450,6 +455,7 @@ CL-USER&gt; (setf (config-var 'py4cl2:pycmd) &quot;python&quot;)
 <h5 id="python-alive-p">python-alive-p</h5>
 <h5 id="python-start-if-not-alive">python-start-if-not-alive</h5>
 <h5 id="defpymodule-silent-p">*defpymodule-silent-p*</h5>
+<h5 id="print-python-object">*print-python-object*</h5>
 <h3 id="doing-arbitrary-things-in-python">Doing arbitrary things in python</h3>
 <p>Unlike lisp, python (and most other languages) make a distinction between <em>statements</em> and <em>expressions</em>: see <a href="https://www.quora.com/Whats-the-difference-between-a-statement-and-an-expression-in-Python-Why-is-print-%E2%80%98hi%E2%80%99-a-statement-while-other-functions-are-expressions">Quora</a> or <a href="https://stackoverflow.com/questions/4728073/what-is-the-difference-between-an-expression-and-a-statement-in-python">stackoverflow</a>.</p>
 <p>A general rule of thumb from there is: if you can print it, or assign it to a variable, then it's an expression, otherwise it's a statement.</p>
@@ -578,7 +584,7 @@ to call a callable (in Python) object, but not defined as a function in Common L
 you'd need to use something like <a href="#pycall">pycall</a>.</p>
 <h4 id="defpyfuns">defpyfuns</h4>
 <p>(Undocumented here.)</p>
-<h3 id="custom-type-mapping">Custom Type Mapping</h3>
+<h3 id="customizing-type-mapping">Customizing Type Mapping</h3>
 <h4 id="lispifiers">*lispifiers*</h4>
 <blockquote>
 <p>NOTE: This is a new feature and hence unstable; recommended to avoid in production code.</p>
@@ -604,6 +610,36 @@ and return the appropriate object user expects.</p>
   ; #(1 2 3) ; default lispified object
   ; (1 2 3)  ; coerced to LIST by the lispifier
   ; 5        ; lispifier uncalled for non-VECTOR
+  5
+</code></pre>
+<h4 id="pythonizers">*pythonizers*</h4>
+<blockquote>
+<p>NOTE: This is a new feature and hence unstable; recommended to avoid in production code.</p>
+</blockquote>
+<p>Each entry in the alist <code>*pythonizers*</code> maps from a lisp-type to
+a single-argument PYTHON-FUNCTION-DESIGNATOR. This python function takes as input the
+"default" python objects and is expected to appropriately convert it to the corresponding
+python object.</p>
+<h4 id="with-pythonizers">with-pythonizers</h4>
+<pre><code class="language-lisp">(with-pythonizers (&amp;rest overriding-pythonizers) &amp;body body)
+</code></pre>
+<blockquote>
+<p>NOTE: This is a new feature and hence unstable; recommended to avoid in production code.</p>
+</blockquote>
+<p>Each entry of <code>overriding-pythonizers</code> is a two-element list of the form</p>
+<pre><code>  (type pythonizer)
+</code></pre>
+<p>Here, <code>type</code> is unevaluated, while <code>pythonizer</code> will be evaluated; the <code>pythonizer</code> is expected
+to take a default-pythonized object (see lisp-python types translation table in docs)
+and return the appropriate object user expects.</p>
+<p>For example,</p>
+<pre><code class="language-lisp">  (pyeval &quot;[1, 2, 3]&quot;) ;=&gt; #(1 2 3) ; the default object
+  (with-pythonizers ((vector &quot;tuple&quot;))
+    (print (pyeval &quot;[1,2,3]&quot;))
+    (print (pyeval 5)))
+  ; #(1 2 3) ; default object
+  ; (1 2 3)  ; coerced to tuple by the pythonizer, which then translates to list
+  ; 5        ; pythonizer uncalled for non-VECTOR
   5
 </code></pre>
 <h2 id="errors">Errors</h2>
@@ -942,7 +978,7 @@ stored and a handle is returned to lisp. This handle can be used to
 manipulate the object, and when it is garbage collected the python
 object is also deleted (using the <a href="https://common-lisp.net/project/trivial-garbage/">trivial-garbage</a>
 package).</p>
-<h3 id="customizing-type-mapping">Customizing Type-Mapping</h3>
+<h3 id="customizing-type-mapping_1">Customizing Type-Mapping</h3>
 <blockquote>
 <p>Unstable feature</p>
 </blockquote>
@@ -1048,5 +1084,5 @@ T
 
 <!--
 MkDocs version : 1.2.1
-Build Date UTC : 2021-06-27 19:40:16.664832+00:00
+Build Date UTC : 2021-11-04 19:19:45.792549+00:00
 -->
