@@ -130,17 +130,17 @@
     </li>
         </ul>
     </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#errors">Errors</a>
+    <li class="toctree-l3"><a class="reference internal" href="#errors">Errors</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#pyerror">pyerror</a>
+    <li class="toctree-l4"><a class="reference internal" href="#pyerror">pyerror</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#python-process-startup-error">python-process-startup-error</a>
+    <li class="toctree-l4"><a class="reference internal" href="#python-process-startup-error">python-process-startup-error</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#python-eof-and-dead">python-eof-and-dead</a>
+    <li class="toctree-l4"><a class="reference internal" href="#python-eof-and-dead">python-eof-and-dead</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#python-eof-but-alive">python-eof-but-alive</a>
+    <li class="toctree-l4"><a class="reference internal" href="#python-eof-but-alive">python-eof-but-alive</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#using-functions-and-methods">Using functions and methods</a>
         <ul>
@@ -642,14 +642,14 @@ and return the appropriate object user expects.</p>
   ; 5        ; pythonizer uncalled for non-VECTOR
   5
 </code></pre>
-<h2 id="errors">Errors</h2>
-<h3 id="pyerror">pyerror</h3>
+<h3 id="errors">Errors</h3>
+<h4 id="pyerror">pyerror</h4>
 <p>Signalled if there an error in a running python process</p>
-<h3 id="python-process-startup-error">python-process-startup-error</h3>
+<h4 id="python-process-startup-error">python-process-startup-error</h4>
 <p>Signalled if <a href="#pystart">pystart</a> fails to start a python process</p>
-<h3 id="python-eof-and-dead">python-eof-and-dead</h3>
+<h4 id="python-eof-and-dead">python-eof-and-dead</h4>
 <p>Signalled (from <code>dispatch-messages</code>) if the lisp process is unable to read/write from/to a python process and the process has died. This should provide a cleaner error than <code>CL:END-OF-FILE</code>.</p>
-<h3 id="python-eof-but-alive">python-eof-but-alive</h3>
+<h4 id="python-eof-but-alive">python-eof-but-alive</h4>
 <p>Signalled (from <code>dispatch-messages</code>) if the lisp process is unable to read/write from/to a python process but the process is alive. This should provide a cleaner error than <code>CL:END-OF-FILE</code>.</p>
 <h3 id="using-functions-and-methods">Using functions and methods</h3>
 <h4 id="pycall">pycall</h4>
@@ -775,11 +775,12 @@ CL-USER&gt; (pyeval (model) &quot;.inputs&quot;)
 <p>Optionally, see <a href="#pymethod">pymethod</a>.</p>
 <h3 id="chain">chain(*)</h3>
 <p><code>(chain &amp;rest chain)</code></p>
-<p>This is inspired by the <code>chain</code> in parenscript, discussed in [this issue].</p>
+<p>This is inspired by the <code>chain</code> in parenscript, discussed in <a href="https://github.com/bendudson/py4cl/issues/4">this issue</a>.</p>
 <p>In python it is quite common to apply a chain of method calls, data
 member access, and indexing operations to an object. To make this work
 smoothly in Lisp, there is the <code>chain</code> macro (Thanks to @kat-co and
-[[https://common-lisp.net/project/parenscript/reference.html][parenscript]] for the inspiration). This consists of a target object,
+<a href="https://common-lisp.net/project/parenscript/reference.html">parenscript</a>
+for the inspiration). This consists of a target object,
 followed by a chain of operations to apply.  For example</p>
 <pre><code class="language-lisp">(chain &quot;hello {0}&quot; (format &quot;world&quot;) (capitalize)) ; =&gt; &quot;Hello world&quot;
 </code></pre>
@@ -787,12 +788,9 @@ followed by a chain of operations to apply.  For example</p>
 <p><code>chain</code> has two variants: <code>chain</code> is a macro, and <code>chain*</code> is a function.</p>
 <p>A few examples are as follows:</p>
 <pre><code class="language-lisp">(chain (slice 3) stop) ; =&gt; 3
-</code></pre>
-<p>Symbols as first argument, or arguments to python methods, are
-evaluated, so the following works:</p>
-<pre><code class="language-lisp">(let ((format-str &quot;hello {0}&quot;)
+(let ((format-str &quot;hello {0}&quot;)
       (argument &quot;world&quot;))
- (py4cl:chain format-str (format argument))) ; =&gt; &quot;hello world&quot;
+ (py4cl2:chain* format-str `(format ,argument))) ; =&gt; &quot;hello world&quot;
 </code></pre>
 <p>Arguments to methods are lisp, since only the top level forms in <code>chain</code> are treated specially:</p>
 <pre><code class="language-lisp">CL-USER&gt; (chain (slice 3) stop)
@@ -1084,5 +1082,5 @@ T
 
 <!--
 MkDocs version : 1.2.1
-Build Date UTC : 2021-11-04 19:19:45.792549+00:00
+Build Date UTC : 2022-04-19 16:13:23.428392+00:00
 -->
