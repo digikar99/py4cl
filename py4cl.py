@@ -80,8 +80,7 @@ class LispCallbackObject (object):
 		"""
 		Delete this object, sending a message to Lisp
 		"""
-		return_stream.write("d")
-		send_value(self.handle)
+		send_value("d", self.handle)
 
 	def __call__(self, *args, **kwargs):
 		"""
@@ -100,8 +99,7 @@ class LispCallbackObject (object):
 		old_return_values = return_values # Save to restore after
 		try:
 			return_values = 0
-			return_stream.write("c")
-			send_value((self.handle, allargs))
+			send_value("c", (self.handle, allargs))
 		finally:
 			return_values = old_return_values
 
@@ -132,8 +130,7 @@ class UnknownLispObject (object):
 		"""
 		try:
 			sys.stdout = return_stream
-			return_stream.write("d")
-			send_value(self.handle)
+			send_value("d", self.handle)
 		finally:
 			sys.stdout = output_stream
 
@@ -144,8 +141,7 @@ class UnknownLispObject (object):
 		# Check if there is a slot with this name
 		try:
 			sys.stdout = return_stream
-			return_stream.write("s") # Slot read
-			send_value((self.handle, attr))
+			send_value("s", (self.handle, attr)) # Slot read
 		finally:
 			sys.stdout = output_stream
 
@@ -157,8 +153,7 @@ class UnknownLispObject (object):
 			return object.__setattr__(self, attr, value)
 		try:
 			sys.stdout = return_stream
-			return_stream.write("S") # Slot write
-			send_value((self.handle, attr, value))
+			send_value("S", (self.handle, attr, value)) # Slot write
 		finally:
 			sys.stdout = output_stream
 		# Wait until finished, to syncronise
@@ -354,10 +349,11 @@ def recv_value():
 	"""
 	return eval(recv_string(), eval_globals)
 
-def send_value(value):
+def send_value(cmd_type, value):
 	"""
 	Send a value to stdout as a string, with length of string first
 	"""
+	return_stream.write(cmd_type)
 	try:
 		# if type(value) == str and return_values > 0:
 		# value_str = value # to handle stringified-errors along with remote-objects
@@ -379,13 +375,11 @@ def return_value(value):
 	"""
 	if isinstance(value, Exception):
 		return return_error(value)
-	return_stream.write("r")
-	return_stream.flush()
-	send_value(value)
+	# return_stream.flush() # TODO not sure
+	send_value("r", value)
 
 def return_error(error):
-	return_stream.write("e")
-	send_value(error)
+	send_value("e", error)
 
 def pythonize(value): # assumes the symbol name is downcased by the lisp process
 	"""
