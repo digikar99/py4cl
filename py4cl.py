@@ -17,6 +17,7 @@ import json
 import os
 import signal
 import traceback
+import threading
 
 numpy_is_installed = False
 try:
@@ -393,24 +394,26 @@ def recv_value():
 	"""
 	return eval(recv_string(), eval_globals)
 
+send_value_lock = threading.RLock()
 def send_value(cmd_type, value):
 	"""
 	Send a value to stdout as a string, with length of string first
 	"""
-	return_stream.write(cmd_type)
-	try:
-		# if type(value) == str and return_values > 0:
-		# value_str = value # to handle stringified-errors along with remote-objects
-		# else:
-		value_str = lispify(value)
-	except Exception as e:
-		# At this point the message type has been sent,
-		# so we cannot change to throw an exception/signal condition
-		value_str = "Lispify error: {0}".format(lispify_exception(e))
-	excess_char_count = (0 if os.name != "nt" else value_str.count("\n"))
-	print(len(value_str)+excess_char_count, file = return_stream, flush=True)
-	return_stream.write(value_str)
-	return_stream.flush()
+	with send_value_lock:
+		return_stream.write(cmd_type)
+		try:
+			# if type(value) == str and return_values > 0:
+			# value_str = value # to handle stringified-errors along with remote-objects
+			# else:
+			value_str = lispify(value)
+		except Exception as e:
+			# At this point the message type has been sent,
+			# so we cannot change to throw an exception/signal condition
+			value_str = "Lispify error: {0}".format(lispify_exception(e))
+		excess_char_count = (0 if os.name != "nt" else value_str.count("\n"))
+		print(len(value_str)+excess_char_count, file = return_stream, flush=True)
+		return_stream.write(value_str)
+		return_stream.flush()
 
 def return_value(value):
 	"""
