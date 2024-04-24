@@ -12,6 +12,9 @@ Check the [Releases](https://github.com/digikar99/py4cl2/releases) section. That
 
 Please test using [py4cl2-tests](https://github.com/digikar99/py4cl2-tests).
 
+# For MacOS Users 
+If you have bash 3.2 please upgrade it to a [more recent version](https://www.shell-tips.com/mac/upgrade-bash/#gsc.tab=0).
+
 # Quick Demonstration
 
 <img margin="auto" width="75%" src="./docs/readme_slime.png"></img>
