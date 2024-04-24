@@ -24,7 +24,7 @@ The list can include one or more of:
       nil)))
 
 (defparameter *feature-exclusion-alist*
-  `((:with-python-output        :ccl :ecl)
+  `((:with-python-output        :ecl)
     (:interrupt                 :ecl :abcl :windows :os-windows)
     (:fast-large-array-transfer :ecl :abcl)
     (:typed-arrays              :abcl)))
