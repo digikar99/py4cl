@@ -82,6 +82,7 @@ class LispCallbackObject (object):
 	An object is used rather than a lambda, so that the lifetime
 	can be monitoried, and the function removed from a hash map
 	"""
+	lisp_callback_lock = threading.RLock()
 	def __init__(self, handle):
 		"""
 		handle    A number, used to refer to the object in Lisp
@@ -108,16 +109,17 @@ class LispCallbackObject (object):
 		for key, value in kwargs.items():
 			allargs += (Symbol(":"+str(key)), value)
 
-		old_return_values = return_values # Save to restore after
-		try:
-			return_values = 0
-			send_value("c", (self.handle, allargs))
-		finally:
-			return_values = old_return_values
+		with LispCallbackObject.lisp_callback_lock:
+			old_return_values = return_values # Save to restore after
+			try:
+				return_values = 0
+				send_value("c", (self.handle, allargs))
+			finally:
+				return_values = old_return_values
 
-		# Wait for a value to be returned.
-		# Note that the lisp function may call python before returning
-		return message_dispatch_loop()
+			# Wait for a value to be returned.
+			# Note that the lisp function may call python before returning
+			return message_dispatch_loop()
 
 
 class UnknownLispObject (object):
