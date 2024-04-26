@@ -4,6 +4,10 @@
 
 Detailed documentation is available on [github-pages](https://digikar99.github.io/py4cl2/) (could be a bit outdated).
 
+## For MacOS Users
+
+If you have bash 3.2 please upgrade it to a [more recent version](https://www.shell-tips.com/mac/upgrade-bash/#gsc.tab=0).
+
 # Releases
 
 Check the [Releases](https://github.com/digikar99/py4cl2/releases) section. That said, if you are looking for stability, look at py4cl and not py4cl2, at least not in 2021. You may use py4cl2 on use-and-throw projects, or use it without using "edgy" features (not yet classified).
