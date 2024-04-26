@@ -1,6 +1,6 @@
 # py4cl2
 
-[Last update: v2.9.0]
+[Last update: v2.9.3]
 
 ## Introduction
 
@@ -96,7 +96,7 @@ This shouldn't be a bottleneck if you're planning to run "long" processes in pyt
 <td>with-python-output</td>
 <td>✓</td>
 <td>✓</td>
-<td>✗</td>
+<td>✓</td>
 <td>✗</td>
 <td>✓</td>
 </tr>
@@ -1033,8 +1033,6 @@ In no order of priority:
 ### [The Common Lisp Cookbook](http://lispcookbook.github.io/cl-cookbook/)
 
 [tCLC]: https://github.com/LispCookbook/cl-cookbook
-[pyeval]: #expressions-pyeval-rest-args
-[limitations]: #limitations-of-this-documentation
 [pycall]: #pycall
 [Name Mapping]: #name-mapping
 [bendudson/py4cl]: https://github.com/bendudson/py4cl
