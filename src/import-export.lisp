@@ -194,14 +194,21 @@ Arguments:
 
 (declaim (ftype (function (string string)) pymodule-import-string))
 (defun pymodule-import-string (pymodule-name lisp-package)
+  "Returns two values:
+- The first value is the import string to be executed by raw-pyexec
+- The second value is the name of the package in python itself"
   (let ((package-in-python (%pythonize (intern lisp-package))))
-    (values
-     (cond (*is-submodule* "")
-           (*lisp-package-supplied-p*
+    (cond (*is-submodule*
+           (values "" pymodule-name))
+          (*lisp-package-supplied-p*
+           (values
             (concatenate 'string "import " pymodule-name
-                         " as " package-in-python))
-           (t (concatenate 'string "import " pymodule-name)))
-     package-in-python)))
+                         " as " package-in-python)
+            package-in-python))
+          (t
+           (values
+            (concatenate 'string "import " pymodule-name)
+            package-in-python)))))
 
 (defun function-reload-string (&key pymodule-name lisp-package fun-name as)
   (if *called-from-defpymodule*
