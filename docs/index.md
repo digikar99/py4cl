@@ -603,12 +603,12 @@ Also see [Name Mapping].
 
 Lisp functions can be made available to python code using `export-function`:
 ```lisp
-(py4cl:python-exec "from scipy.integrate import romberg")
+(py4cl2:python-exec "from scipy.integrate import romberg")
 
-(py4cl:export-function (lambda (x) (/ (exp (- (* x x)))
+(py4cl2:export-function (lambda (x) (/ (exp (- (* x x)))
                                       (sqrt pi))) "gaussian")
 
-(py4cl:python-eval "romberg(gaussian, 0.0, 1.0)") ; => 0.4213504
+(py4cl2:python-eval "romberg(gaussian, 0.0, 1.0)") ; => 0.4213504
 ```
 
 #### pyhelp
@@ -635,7 +635,7 @@ CL-USER> (pyeval "[x for x in " (pygenerator #'foo 3) "]")
 Lisp functions are `pythonize`d to `LispCallbackObject`s. As the name suggests, python can call LispCallbackObjects (and therefore, lisp functions), just like it is any other python callable (which it is!).
 
 ```lisp
-CL-USER> (py4cl::pythonize #'car)
+CL-USER> (py4cl2::pythonize #'car)
 "_py4cl_LispCallbackObject(4)"
 
 CL-USER> (pycall (lambda (string) (concatenate 'string string " - from Lisp"))
@@ -785,14 +785,14 @@ in which all python functions return handles rather than values to lisp. This en
 python functions to be combined without transferring much data.
 
 ```lisp
-(with-remote-objects (py4cl:python-eval "1+2"))
-; => #S(PY4CL::PYTHON-OBJECT :TYPE "<class 'int'>" :HANDLE 0)
+(with-remote-objects (py4cl2:python-eval "1+2"))
+; => #S(PY4CL2::PYTHON-OBJECT :TYPE "<class 'int'>" :HANDLE 0)
 ```
 
 `with-remote-objects*` evaluates the last result, instead of merely returning a handle
 
 ```lisp
-(with-remote-objects* (py4cl:python-eval "1+2")) ; => 3
+(with-remote-objects* (py4cl2:python-eval "1+2")) ; => 3
 ```
 
 The advantage comes when dealing with large arrays or other datasets:
@@ -882,7 +882,7 @@ Inheritance then works as usual with CLOS methods:
   ((other :initarg :other)))
 
 ;; Define method which passes to the next method if slot not recognised
-(defmethod py4cl:python-getattr ((object child-class) slot-name)
+(defmethod py4cl2:python-getattr ((object child-class) slot-name)
   (cond
     ((string= slot-name "other")
      (slot-value object 'other))
@@ -937,16 +937,16 @@ t       True
 
 Because `pyeval` and `pyexec` evaluate strings as python
 expressions, strings passed to them are not escaped or converted as
-other types are. To pass a string to python as an argument, call `py4cl:pythonize`
+other types are. To pass a string to python as an argument, call `py4cl2:pythonize`
 
 ```lisp
-CL-USER> (py4cl:pythonize "string")
+CL-USER> (py4cl2:pythonize "string")
 "\"string\""
-CL-USER> (py4cl:pythonize #'identity)
+CL-USER> (py4cl2:pythonize #'identity)
 "_py4cl_LispCallbackObject(1)"
-CL-USER> (py4cl:pythonize 3.0)
+CL-USER> (py4cl2:pythonize 3.0)
 "3.0"
-CL-USER> (py4cl:pythonize (model)) ;; keras.Model
+CL-USER> (py4cl2:pythonize (model)) ;; keras.Model
 "_py4cl_objects[1918]"
 ```
 
